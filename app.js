@@ -1,37 +1,21 @@
 const express = require('express');
+const jwt = require('jsonwebtoken')
+const Seller = require('./models/seller');
+const loginSeller = require('./routes/loginSeller');
+const registerSeller = require('./routes/registerSeller');
+
 const app = express();
 
-const postsRoute = require('./routes');
-const Seller = require('./models/seller');
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.json({test : 'Hello'});
 });
 
-app.get('/', postsRoute);
+app.post('/register-seller', registerSeller)
+app.post('/login-seller', loginSeller)
 
-app.post('/register-seller', async(req, res) => {
-    const {
-        name,
-        email,
-        password,
-        address
-    } = req.body;
-
-    const payload = req.payload;
-    console.log(payload);
-    const seller = new Seller({
-        name,
-        email,
-        password,
-        address
-    });
-    
-    const result = await seller.save();
-    return res.send(result)
-});
-
-app.listen(3000, () =>{
-    console.log('Sever is running')
+app.listen(process.env.API_PORT, () =>{
+    console.log('Sever is running');
 });
